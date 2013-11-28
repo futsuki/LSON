@@ -1,11 +1,11 @@
-LSON
+ï»¿LSON
 ====
 
 Lua Script Object Notation
 
-Javascript‚ÌJSON•—‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+Javascriptã®JSONé¢¨ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-LuaJIT2.0.2 ‚Æ Lua5.2.1 ‚Å“®ìŠm”F‚µ‚Ä‚¢‚Ü‚·B‘¼‚É‚àLuaŠÂ‹«‚ª‚ ‚Á‚½‚ç‹³‚¦‚Ä‰º‚³‚¢B
+LuaJIT2.0.2 ã¨ Lua5.2.1 ã§å‹•ä½œç¢ºèªã—ã¦ã„ã¾ã™ã€‚ä»–ã«ã‚‚Luaç’°å¢ƒãŒã‚ã£ãŸã‚‰æ•™ãˆã¦ä¸‹ã•ã„ã€‚
 
 License
 -------
@@ -31,23 +31,23 @@ local hoge = {
     end
 }
 
--- LSON‰»
+-- LSONåŒ–
 local ls = LSON.stringify(hoge)
 print("lson", ls)
 --> lson    {1, 2, 3, 4, 5, ["foobar"] = 42, ["foo"] = 3, ["str"] = "abcdefg",
 --   ["fun"] = FUNCTION("G0xKAQAJQHRlc3QubHVhFQAAAQAAAAIDCwInAAoASAACAAEBAAA="),
 --   ["arr"] = {5, 6, 7, 8, 9}, ["bar"] = 5}
 
--- ‚à‚Ç‚·
+-- ã‚‚ã©ã™
 local hoge2 = LSON.parse(ls)
 
--- ‚È‚ñ‚ÆŠÖ”‚à‚à‚Ç‚éI‚·‚°[
+-- ãªã‚“ã¨é–¢æ•°ã‚‚ã‚‚ã©ã‚‹ï¼ã™ã’ãƒ¼
 print("fun()", hoge2.fun())
 --> fun()   10
 
 
--- ‚±‚Ì2‚Â‚Í‚Ù‚Ú“¯‚¶ˆÓ–¡
--- •œŒ³•s‰Â”\‚È‘ã‚í‚è‚Éo—ˆ‚éŒÀ‚è’l‚ð‚í‚©‚è‚â‚·‚­•\Œ»‚µ‚æ‚¤‚Æ‚·‚éEEE‚½‚Ô‚ñ
+-- ã“ã®2ã¤ã¯ã»ã¼åŒã˜æ„å‘³
+-- å¾©å…ƒä¸å¯èƒ½ãªä»£ã‚ã‚Šã«å‡ºæ¥ã‚‹é™ã‚Šå€¤ã‚’ã‚ã‹ã‚Šã‚„ã™ãè¡¨ç¾ã—ã‚ˆã†ã¨ã™ã‚‹ãƒ»ãƒ»ãƒ»ãŸã¶ã‚“
 p("pretty", hoge)
 print("pretty", LSON.stringify(hoge, false))
 --> pretty  {1, 2, 3, 4, 5, foobar = 42, foo = 3, str = abcdefg,

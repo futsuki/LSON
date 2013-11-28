@@ -1,4 +1,4 @@
-
+﻿
 LSON = require("lson")
 
 local hoge = {
@@ -13,22 +13,22 @@ local hoge = {
     end
 }
 
--- LSON��
+-- LSON化
 local ls = LSON.stringify(hoge)
 print("lson", ls)
 
--- ���ǂ�
+-- もどす
 local hoge2 = LSON.parse(ls)
 
--- �Ȃ�Ɗ֐������ǂ�I�����[
+-- なんと関数ももどる！すげー
 print("fun()", hoge2.fun())
 
 
 
--- ����2�͂قړ����Ӗ�
--- �����s�\�ȑ���ɏo�������l��\�����悤�Ƃ���
--- ���Ƃ��Ώz�Q�Ƃ�l�C�e�B�u�֐�
--- �l�Ԃ̖ڂɂ₳�����E�E�E�Ƃ����ڕW������
+-- この2つはほぼ同じ意味
+-- 復元不可能な代わりに出来る限り値を表現しようとする
+-- たとえば循環参照やネイティブ関数
+-- 人間の目にやさしい・・・という目標がある
 p("pretty", hoge)
 print("pretty", LSON.stringify(hoge, false))
 
