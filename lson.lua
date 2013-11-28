@@ -1,13 +1,10 @@
 local self = getfenv()
-if type(self.LSON) == "table" and self.LSON.stringify and self.LSON.parse then
-  return self.LSON
-end
 local loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable
 loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable = self.loadstring, self.type, self.ipairs, self.pairs, self.pcall, self.print, self.getmetatable, self.setmetatable
-local byte, sub
+local byte, sub, dump
 do
   local _obj_0 = string
-  byte, sub = _obj_0.byte, _obj_0.sub
+  byte, sub, dump = _obj_0.byte, _obj_0.sub, _obj_0.dump
 end
 local encode, decode
 do
@@ -93,9 +90,9 @@ toLSON = function(o, reconstructable, circularCheckTable)
     end
   elseif "function" == _exp_0 then
     if reconstructable then
-      local stat, str = pcall(string.dump, o)
+      local stat, str = pcall(dump, o)
       if stat and str ~= nil then
-        return "FUNCTION(\"" .. tostring(base64.encode(str)) .. "\")"
+        return "FUNCTION(\"" .. tostring(encode(str)) .. "\")"
       else
         return nil
       end
@@ -121,7 +118,7 @@ fromLSON = function(str, env)
     return nil
   end
   local stat, f = pcall(chunk)
-  if stat then
+  if stat and type(f) == 'function' then
     local oldf = env.FUNCTION
     if env.FUNCTION == nil then
       env.FUNCTION = parseFunction
@@ -149,9 +146,9 @@ if self.p == nil then
     return ...
   end
 end
-self.LSON = {
+local LSON = {
   stringify = toLSON,
   parse = fromLSON,
   p = p
 }
-return self.LSON
+return LSON

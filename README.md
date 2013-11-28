@@ -15,7 +15,7 @@ PUBLIC DOMAIN
 > test.lua
 
 ```lua
-require("lson")
+LSON = require("lson")
 
 local hoge = {
     1, 2, 3, 4, 5,

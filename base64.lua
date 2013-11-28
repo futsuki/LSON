@@ -1,7 +1,4 @@
 local self = getfenv()
-if type(self.base64) == "table" and self.base64.encode and self.base64.decode then
-  return self.base64
-end
 local rshift, lshift, bor, band
 do
   local _obj_0 = bit32 or bit
@@ -329,7 +326,7 @@ base64dec = function(str)
   t[lt + 1], t[lt + 2], t[lt + 3] = decode4bytesTail(str, len + 1)
   return concat(t)
 end
-self.base64 = {
+local base64 = {
   encode = base64enc,
   decode = base64dec
 }

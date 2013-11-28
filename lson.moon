@@ -25,12 +25,8 @@
 
 @ = getfenv()
 
--- require once
-if type(@LSON) == "table" and @LSON.stringify and @LSON.parse
-    return @LSON
-
 import loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
-import byte, sub from string
+import byte, sub, dump from string
 import encode, decode from require("base64")
 
 -- lua script object notation
@@ -84,9 +80,9 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
                 "#{o}"
         when "function"
             if reconstructable
-                stat, str = pcall(string.dump, o)
+                stat, str = pcall(dump, o)
                 if stat and str != nil
-                    "FUNCTION(\"#{base64.encode(str)}\")"
+                    "FUNCTION(\"#{encode(str)}\")"
                 else
                     nil
             else
@@ -103,7 +99,7 @@ fromLSON = (str, env=parseEnv) ->
     if chunk == nil
         return nil
     stat, f = pcall(chunk)
-    if stat
+    if stat and type(f) == 'function'
         oldf = env.FUNCTION
         if env.FUNCTION == nil
             env.FUNCTION = parseFunction
@@ -126,13 +122,13 @@ if @p == nil
                 print toLSON(v, false)
         ...
 
-@LSON = 
+LSON = 
     stringify: toLSON
     parse: fromLSON
     p: p
 
 
-@LSON
+LSON
 
 
 
