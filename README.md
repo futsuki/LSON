@@ -5,6 +5,8 @@ Lua Script Object Notation
 
 JavascriptのJSON風のインターフェース
 
+LuaJIT2.0.2 と Lua5.2.1 で動作確認しています。他にも対応したほうがよさそうなLua環境があったら教えて下さい。
+
 License
 -------
 PUBLIC DOMAIN

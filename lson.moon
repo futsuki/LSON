@@ -23,9 +23,11 @@
 -- 
 -- For more information, please refer to <http://unlicense.org>
 
-@ = getfenv()
+@ = _ENV or getfenv()
 
-import loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
+isLua52 = getfenv == nil
+
+import load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
 import byte, sub, dump from string
 import encode, decode from require("base64")
 
@@ -92,23 +94,39 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
 
 parseEnv = {}
 parseFunction = (s) ->
-    loadstring(decode(s))
+    load(decode(s))
 
 fromLSON = (str, env=parseEnv) ->
-    chunk = loadstring("return function() return (#{str}); end;")
-    if chunk == nil
-        return nil
-    stat, f = pcall(chunk)
-    if stat and type(f) == 'function'
+    if isLua52
         oldf = env.FUNCTION
         if env.FUNCTION == nil
             env.FUNCTION = parseFunction
-        setfenv(f, env)
-        ret = f()
+        chunk = load("return function() return (#{str}); end;", str, "t", env)
+        if chunk == nil
+            return nil
+        stat, f = pcall(chunk)
+        ret = if stat and type(f) == 'function'
+            f()
+        else
+            nil
         env.FUNCTION = oldf
         ret
     else
-        nil
+        chunk = load("return function() return (#{str}); end;")
+        if chunk == nil
+            return nil
+        stat, f = pcall(chunk)
+        if stat and type(f) == 'function'
+            oldf = env.FUNCTION
+            if env.FUNCTION == nil
+                env.FUNCTION = parseFunction
+            setfenv(f, env)
+            ret = f()
+            env.FUNCTION = oldf
+            ret
+        else
+            nil
+        
 
 
 -- pretty print

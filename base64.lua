@@ -1,4 +1,4 @@
-local self = getfenv()
+local self = _ENV or getfenv()
 local rshift, lshift, bor, band
 do
   local _obj_0 = bit32 or bit

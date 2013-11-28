@@ -23,7 +23,7 @@
 -- 
 -- For more information, please refer to <http://unlicense.org>
 
-@ = getfenv()
+@ = _ENV or getfenv()
 
 import rshift, lshift, bor, band from bit32 or bit
 import byte, char from string

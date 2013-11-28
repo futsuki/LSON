@@ -1,6 +1,7 @@
-local self = getfenv()
-local loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable
-loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable = self.loadstring, self.type, self.ipairs, self.pairs, self.pcall, self.print, self.getmetatable, self.setmetatable
+local self = _ENV or getfenv()
+local isLua52 = getfenv == nil
+local load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable
+load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable = self.load, self.type, self.ipairs, self.pairs, self.pcall, self.print, self.getmetatable, self.setmetatable
 local byte, sub, dump
 do
   local _obj_0 = string
@@ -106,29 +107,49 @@ end
 local parseEnv = { }
 local parseFunction
 parseFunction = function(s)
-  return loadstring(decode(s))
+  return load(decode(s))
 end
 local fromLSON
 fromLSON = function(str, env)
   if env == nil then
     env = parseEnv
   end
-  local chunk = loadstring("return function() return (" .. tostring(str) .. "); end;")
-  if chunk == nil then
-    return nil
-  end
-  local stat, f = pcall(chunk)
-  if stat and type(f) == 'function' then
+  if isLua52 then
     local oldf = env.FUNCTION
     if env.FUNCTION == nil then
       env.FUNCTION = parseFunction
     end
-    setfenv(f, env)
-    local ret = f()
+    local chunk = load("return function() return (" .. tostring(str) .. "); end;", str, "t", env)
+    if chunk == nil then
+      return nil
+    end
+    local stat, f = pcall(chunk)
+    local ret
+    if stat and type(f) == 'function' then
+      ret = f()
+    else
+      ret = nil
+    end
     env.FUNCTION = oldf
     return ret
   else
-    return nil
+    local chunk = load("return function() return (" .. tostring(str) .. "); end;")
+    if chunk == nil then
+      return nil
+    end
+    local stat, f = pcall(chunk)
+    if stat and type(f) == 'function' then
+      local oldf = env.FUNCTION
+      if env.FUNCTION == nil then
+        env.FUNCTION = parseFunction
+      end
+      setfenv(f, env)
+      local ret = f()
+      env.FUNCTION = oldf
+      return ret
+    else
+      return nil
+    end
   end
 end
 if self.p == nil then
