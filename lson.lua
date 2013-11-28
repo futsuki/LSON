@@ -6,7 +6,11 @@ do
   local _obj_0 = string
   byte, sub = _obj_0.byte, _obj_0.sub
 end
-require("base64")
+local encode, decode
+do
+  local _obj_0 = require("base64")
+  encode, decode = _obj_0.encode, _obj_0.decode
+end
 local toLSON
 toLSON = function(o, reconstructable, circularCheckTable)
   if reconstructable == nil then
@@ -88,7 +92,7 @@ toLSON = function(o, reconstructable, circularCheckTable)
     if reconstructable then
       local stat, str = pcall(string.dump, o)
       if stat and str ~= nil then
-        return "loadstring(base64.decode(\"" .. tostring(base64.encode(str)) .. "\"))"
+        return "FUNCTION(\"" .. tostring(base64.encode(str)) .. "\")"
       else
         return nil
       end
@@ -99,11 +103,27 @@ toLSON = function(o, reconstructable, circularCheckTable)
     return tostring(o)
   end
 end
+local parseEnv = { }
 local fromLSON
-fromLSON = function(str)
-  local chunk = loadstring("return (" .. tostring(str) .. ");")
-  local stat, ret = pcall(chunk)
+fromLSON = function(str, env)
+  if env == nil then
+    env = parseEnv
+  end
+  local chunk = loadstring("return function() return (" .. tostring(str) .. "); end;")
+  if chunk == nil then
+    return nil
+  end
+  local stat, f = pcall(chunk)
   if stat then
+    local oldf = env.FUNCTION
+    if env.FUNCTION == nil then
+      env.FUNCTION = function(s)
+        return loadstring(decode(s))
+      end
+    end
+    setfenv(f, env)
+    local ret = f()
+    env.FUNCTION = oldf
     return ret
   else
     return nil

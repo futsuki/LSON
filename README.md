@@ -39,7 +39,7 @@ local hoge = {
 local ls = LSON.stringify(hoge)
 print("lson", ls)
 --> lson    {1, 2, 3, 4, 5, ["foobar"] = 42, ["foo"] = 3, ["str"] = "abcdefg",
---   ["fun"] = loadstring(base64.decode("G0xKAQAJQHRlc3QubHVhFQAAAQAAAAIDCwInAAoASAACAAEBAAA=")),
+--   ["fun"] = FUNCTION("G0xKAQAJQHRlc3QubHVhFQAAAQAAAAIDCwInAAoASAACAAEBAAA="),
 --   ["arr"] = {5, 6, 7, 8, 9}, ["bar"] = 5}
 
 -- ‚à‚Ç‚·

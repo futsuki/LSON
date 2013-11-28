@@ -27,7 +27,7 @@
 
 import loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
 import byte, sub from string
-require("base64")
+import encode, decode from require("base64")
 
 -- lua script object notation
 toLSON = (o, reconstructable=true, circularCheckTable={}) ->
@@ -82,7 +82,7 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
             if reconstructable
                 stat, str = pcall(string.dump, o)
                 if stat and str != nil
-                    "loadstring(base64.decode(\"#{base64.encode(str)}\"))"
+                    "FUNCTION(\"#{base64.encode(str)}\")"
                 else
                     nil
             else
@@ -90,10 +90,21 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
         else
             "#{o}"
 
-fromLSON = (str) ->
-    chunk = loadstring("return (#{str});")
-    stat, ret = pcall(chunk)
+parseEnv = {}
+
+fromLSON = (str, env=parseEnv) ->
+    chunk = loadstring("return function() return (#{str}); end;")
+    if chunk == nil
+        return nil
+    stat, f = pcall(chunk)
     if stat
+        oldf = env.FUNCTION
+        if env.FUNCTION == nil
+            env.FUNCTION = (s) ->
+                loadstring(decode(s))
+        setfenv(f, env)
+        ret = f()
+        env.FUNCTION = oldf
         ret
     else
         nil
