@@ -6,6 +6,7 @@ do
   local _obj_0 = string
   byte, sub = _obj_0.byte, _obj_0.sub
 end
+require("base64")
 local toLSON
 toLSON = function(o, reconstructable, circularCheckTable)
   if reconstructable == nil then

@@ -3,6 +3,7 @@
 
 import loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
 import byte, sub from string
+require("base64")
 
 -- lua script object notation
 toLSON = (o, reconstructable=true, circularCheckTable={}) ->

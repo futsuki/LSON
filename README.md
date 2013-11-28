@@ -1,4 +1,7 @@
-lson
+Lson
 ====
 
-lua script object notation
+Lua script object notation
+
+PUBLIC DOMAIN
+
