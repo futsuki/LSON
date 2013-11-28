@@ -10,10 +10,10 @@ License
 
 これらは PUBLIC DOMAIN
 * test.lua
-* lson.lua
 * lson.moon
-
-base64は別のライセンスです。
+* lson.lua
+* base64.moon
+* base64.lua
 
 
 ## Example

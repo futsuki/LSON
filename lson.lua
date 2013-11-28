@@ -80,11 +80,7 @@ toLSON = function(o, reconstructable, circularCheckTable)
     return ret
   elseif "string" == _exp_0 then
     if reconstructable then
-      if o:byte(1) == 36 then
-        return "\"$" .. tostring(o) .. "\""
-      else
-        return "\"" .. tostring(o) .. "\""
-      end
+      return "\"" .. tostring(o) .. "\""
     else
       return tostring(o)
     end
