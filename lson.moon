@@ -51,18 +51,13 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
             ret
         when "string"
             if reconstructable
-                if o\byte(1) == 36
-                    "\"$#{o}\""
-                else
-                    "\"#{o}\""
+                "\"#{o}\""
             else
                 "#{o}"
         when "function"
             if reconstructable
                 stat, str = pcall(string.dump, o)
                 if stat and str != nil
-                    --"\"$"..base64.encode(LibCompress\Compress(str)).."\""
-                    --"\"$"..base64.encode(str).."\""
                     "loadstring(base64.decode(\"#{base64.encode(str)}\"))"
                 else
                     nil
