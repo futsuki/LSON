@@ -115,20 +115,24 @@ fromLSON = (str, env=parseEnv) ->
         nil
 
 
+-- pretty print
+if @p == nil
+    @p = (...) ->
+        param = {...}
+        if #param == 1
+            print toLSON(param[1], false)
+        else
+            for i, v in ipairs param
+                print toLSON(v, false)
+        ...
+
 @LSON = 
     stringify: toLSON
     parse: fromLSON
+    p: p
 
--- pretty print
-@p = (...) ->
-    param = {...}
-    if #param == 1
-        print toLSON(param[1], false)
-    else
-        for i, v in ipairs param
-            print toLSON(v, false)
-    ...
 
+@LSON
 
 
 

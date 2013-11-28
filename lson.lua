@@ -134,20 +134,24 @@ fromLSON = function(str, env)
     return nil
   end
 end
+if self.p == nil then
+  self.p = function(...)
+    local param = {
+      ...
+    }
+    if #param == 1 then
+      print(toLSON(param[1], false))
+    else
+      for i, v in ipairs(param) do
+        print(toLSON(v, false))
+      end
+    end
+    return ...
+  end
+end
 self.LSON = {
   stringify = toLSON,
-  parse = fromLSON
+  parse = fromLSON,
+  p = p
 }
-self.p = function(...)
-  local param = {
-    ...
-  }
-  if #param == 1 then
-    print(toLSON(param[1], false))
-  else
-    for i, v in ipairs(param) do
-      print(toLSON(v, false))
-    end
-  end
-  return ...
-end
+return self.LSON
