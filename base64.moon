@@ -42,7 +42,7 @@ ENCODE_TABLE = {
 	'8', '9', '+', '/', '='
 }
 DECODE_TABLE = {
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1,
     63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1,
@@ -52,27 +52,9 @@ DECODE_TABLE = {
     42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, -1
 }
 
---countUntil = (a, needle) ->
---	if type(needle) == 'function'
---		for i,v in ipairs a
---			if needle(v)
---				return i
---	else
---		for i,v in ipairs a
---			if v == needle
---				return i
---	return 0
---
----- make table
---for i=0, 128
---    idx = countUntil(ENCODE_TABLE, char(i))
---	DECODE_TABLE[#DECODE_TABLE+1] = if idx == 0
---		-1
---	else
---		idx-1
---
----- tail character
---DECODE_TABLE[byte('=', 1)+1] = -1
+CHAR_TABLE = {}
+for i=0, 255
+    CHAR_TABLE[i+1] = char(i)
 
 
 encode3bytes = (s, start) ->
@@ -104,15 +86,15 @@ encode3bytesTail = (s, start) ->
 
 decode4bytes = (s, start) ->
     c1, c2, c3, c4 = byte(s, start, start+4)
-    c1, c2, c3, c4 = DECODE_TABLE[c1+1], DECODE_TABLE[c2+1], DECODE_TABLE[c3+1], DECODE_TABLE[c4+1]
+    c1, c2, c3, c4 = DECODE_TABLE[c1], DECODE_TABLE[c2], DECODE_TABLE[c3], DECODE_TABLE[c4]
     b1 = bor(lshift(band(c1, 63), 2), rshift(c2, 4))
     b2 = bor(lshift(band(c2, 15), 4), rshift(c3, 2))
     b3 = bor(lshift(band(c3, 3), 6), c4)
-    char(b1, b2, b3)
+    CHAR_TABLE[b1+1], CHAR_TABLE[b2+1], CHAR_TABLE[b3+1]
 
 decode4bytesTail = (s, start) ->
     c1, c2, c3, c4 = byte(s, start, start+4)
-    c1, c2, c3, c4 = DECODE_TABLE[c1+1], DECODE_TABLE[c2+1], DECODE_TABLE[c3+1], DECODE_TABLE[c4+1]
+    c1, c2, c3, c4 = DECODE_TABLE[c1], DECODE_TABLE[c2], DECODE_TABLE[c3], DECODE_TABLE[c4]
     if c1 == -1 then c1 = nil
     if c2 == -1 then c2 = nil
     if c3 == -1 then c3 = nil
@@ -125,11 +107,11 @@ decode4bytesTail = (s, start) ->
     if c3 and c4
         b3 = bor(lshift(band(c3, 3), 6), c4)
     if b1 and b2 and b3
-        char(b1, b2, b3)
+        CHAR_TABLE[b1+1], CHAR_TABLE[b2+1], CHAR_TABLE[b3+1]
     else if b1 and b2
-        char(b1, b2)
+        CHAR_TABLE[b1+1], CHAR_TABLE[b2+1]
     else if b1
-        char(b1)
+        CHAR_TABLE[b1+1]
     else
         ""
 
@@ -149,8 +131,10 @@ base64dec = (str) ->
     t = {}
     len = floor((#str-1) / 4) * 4
     for i=1, len, 4
-        t[#t+1] = decode4bytes(str, i)
-    t[#t+1] = decode4bytesTail(str, len+1)
+        lt = #t
+        t[lt+1], t[lt+2], t[lt+3] = decode4bytes(str, i)
+    lt = #t
+    t[lt+1], t[lt+2], t[lt+3] = decode4bytesTail(str, len+1)
     concat(t)
 
 

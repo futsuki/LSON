@@ -129,7 +129,6 @@ local DECODE_TABLE = {
   -1,
   -1,
   -1,
-  -1,
   62,
   -1,
   -1,
@@ -217,6 +216,10 @@ local DECODE_TABLE = {
   -1,
   -1
 }
+local CHAR_TABLE = { }
+for i = 0, 255 do
+  CHAR_TABLE[i + 1] = char(i)
+end
 local encode3bytes
 encode3bytes = function(s, start)
   local b1, b2, b3 = byte(s, start, start + 2)
@@ -251,16 +254,16 @@ end
 local decode4bytes
 decode4bytes = function(s, start)
   local c1, c2, c3, c4 = byte(s, start, start + 4)
-  c1, c2, c3, c4 = DECODE_TABLE[c1 + 1], DECODE_TABLE[c2 + 1], DECODE_TABLE[c3 + 1], DECODE_TABLE[c4 + 1]
+  c1, c2, c3, c4 = DECODE_TABLE[c1], DECODE_TABLE[c2], DECODE_TABLE[c3], DECODE_TABLE[c4]
   local b1 = bor(lshift(band(c1, 63), 2), rshift(c2, 4))
   local b2 = bor(lshift(band(c2, 15), 4), rshift(c3, 2))
   local b3 = bor(lshift(band(c3, 3), 6), c4)
-  return char(b1, b2, b3)
+  return CHAR_TABLE[b1 + 1], CHAR_TABLE[b2 + 1], CHAR_TABLE[b3 + 1]
 end
 local decode4bytesTail
 decode4bytesTail = function(s, start)
   local c1, c2, c3, c4 = byte(s, start, start + 4)
-  c1, c2, c3, c4 = DECODE_TABLE[c1 + 1], DECODE_TABLE[c2 + 1], DECODE_TABLE[c3 + 1], DECODE_TABLE[c4 + 1]
+  c1, c2, c3, c4 = DECODE_TABLE[c1], DECODE_TABLE[c2], DECODE_TABLE[c3], DECODE_TABLE[c4]
   if c1 == -1 then
     c1 = nil
   end
@@ -284,13 +287,13 @@ decode4bytesTail = function(s, start)
     b3 = bor(lshift(band(c3, 3), 6), c4)
   end
   if b1 and b2 and b3 then
-    return char(b1, b2, b3)
+    return CHAR_TABLE[b1 + 1], CHAR_TABLE[b2 + 1], CHAR_TABLE[b3 + 1]
   else
     if b1 and b2 then
-      return char(b1, b2)
+      return CHAR_TABLE[b1 + 1], CHAR_TABLE[b2 + 1]
     else
       if b1 then
-        return char(b1)
+        return CHAR_TABLE[b1 + 1]
       else
         return ""
       end
@@ -316,9 +319,11 @@ base64dec = function(str)
   local t = { }
   local len = floor((#str - 1) / 4) * 4
   for i = 1, len, 4 do
-    t[#t + 1] = decode4bytes(str, i)
+    local lt = #t
+    t[lt + 1], t[lt + 2], t[lt + 3] = decode4bytes(str, i)
   end
-  t[#t + 1] = decode4bytesTail(str, len + 1)
+  local lt = #t
+  t[lt + 1], t[lt + 2], t[lt + 3] = decode4bytesTail(str, len + 1)
   return concat(t)
 end
 self.base64 = {
