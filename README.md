@@ -1,19 +1,13 @@
-Lson
+LSON
 ====
 
-Lua script object notation
+Lua Script Object Notation
+
+JavascriptのJSON風のインターフェース
 
 License
 -------
-
-インターフェースはJavascriptのJSON風
-
-これらは PUBLIC DOMAIN
-* test.lua
-* lson.moon
-* lson.lua
-* base64.moon
-* base64.lua
+PUBLIC DOMAIN
 
 
 ## Example
