@@ -104,6 +104,10 @@ toLSON = function(o, reconstructable, circularCheckTable)
   end
 end
 local parseEnv = { }
+local parseFunction
+parseFunction = function(s)
+  return loadstring(decode(s))
+end
 local fromLSON
 fromLSON = function(str, env)
   if env == nil then
@@ -117,9 +121,7 @@ fromLSON = function(str, env)
   if stat then
     local oldf = env.FUNCTION
     if env.FUNCTION == nil then
-      env.FUNCTION = function(s)
-        return loadstring(decode(s))
-      end
+      env.FUNCTION = parseFunction
     end
     setfenv(f, env)
     local ret = f()

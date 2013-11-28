@@ -91,6 +91,8 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
             "#{o}"
 
 parseEnv = {}
+parseFunction = (s) ->
+    loadstring(decode(s))
 
 fromLSON = (str, env=parseEnv) ->
     chunk = loadstring("return function() return (#{str}); end;")
@@ -100,8 +102,7 @@ fromLSON = (str, env=parseEnv) ->
     if stat
         oldf = env.FUNCTION
         if env.FUNCTION == nil
-            env.FUNCTION = (s) ->
-                loadstring(decode(s))
+            env.FUNCTION = parseFunction
         setfenv(f, env)
         ret = f()
         env.FUNCTION = oldf
