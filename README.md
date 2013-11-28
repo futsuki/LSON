@@ -20,7 +20,7 @@ base64は別のライセンスです。
 
 > test.lua
 
-`
+```lua
 require("lson")
 
 local hoge = {
@@ -53,4 +53,4 @@ print("fun()", hoge2.fun())
 -- 人間の目にやさしい・・・という目標がある
 p("pretty", hoge)
 print("pretty", LSON.stringify(hoge, false))
-`
+```
