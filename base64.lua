@@ -1,3 +1,4 @@
+local self = getfenv()
 local rshift, lshift, bor, band
 do
   local _obj_0 = bit32 or bit
@@ -85,33 +86,137 @@ local ENCODE_TABLE = {
   '/',
   '='
 }
-local DECODE_TABLE = { }
-local countUntil
-countUntil = function(a, needle)
-  if type(needle) == 'function' then
-    for i, v in ipairs(a) do
-      if needle(v) then
-        return i
-      end
-    end
-  else
-    for i, v in ipairs(a) do
-      if v == needle then
-        return i
-      end
-    end
-  end
-  return 0
-end
-for i = 0, 128 do
-  local idx = countUntil(ENCODE_TABLE, char(i))
-  if idx == 0 then
-    DECODE_TABLE[#DECODE_TABLE + 1] = -1
-  else
-    DECODE_TABLE[#DECODE_TABLE + 1] = idx - 1
-  end
-end
-DECODE_TABLE[byte('=', 1) + 1] = -1
+local DECODE_TABLE = {
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  62,
+  -1,
+  -1,
+  -1,
+  63,
+  52,
+  53,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1
+}
 local encode3bytes
 encode3bytes = function(s, start)
   local b1, b2, b3 = byte(s, start, start + 2)
@@ -216,7 +321,6 @@ base64dec = function(str)
   t[#t + 1] = decode4bytesTail(str, len + 1)
   return concat(t)
 end
-local self = getfenv()
 self.base64 = {
   encode = base64enc,
   decode = base64dec
