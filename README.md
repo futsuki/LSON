@@ -38,19 +38,23 @@ local hoge = {
 -- LSON化
 local ls = LSON.stringify(hoge)
 print("lson", ls)
+--> lson    {1, 2, 3, 4, 5, ["foobar"] = 42, ["foo"] = 3, ["str"] = "abcdefg",
+--   ["fun"] = loadstring(base64.decode("G0xKAQAJQHRlc3QubHVhFQAAAQAAAAIDCwInAAoASAACAAEBAAA=")),
+--   ["arr"] = {5, 6, 7, 8, 9}, ["bar"] = 5}
 
 -- もどす
 local hoge2 = LSON.parse(ls)
 
 -- なんと関数ももどる！すげー
 print("fun()", hoge2.fun())
-
+--> fun()   10
 
 
 -- この2つはほぼ同じ意味
--- 復元不可能な代わりに出来る限り値を表現しようとする
--- たとえば循環参照やネイティブ関数
--- 人間の目にやさしい・・・という目標がある
+-- 復元不可能な代わりに出来る限り値をわかりやすく表現しようとする・・・たぶん
 p("pretty", hoge)
 print("pretty", LSON.stringify(hoge, false))
+--> pretty  {1, 2, 3, 4, 5, foobar = 42, foo = 3, str = abcdefg,
+--  fun = function: 0x003df8a0, arr = {5, 6, 7, 8, 9}, bar = 5}
+
 ```
