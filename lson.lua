@@ -1,4 +1,7 @@
 local self = getfenv()
+if type(self.LSON) == "table" and self.LSON.stringify and self.LSON.parse then
+  return self.LSON
+end
 local loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable
 loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable = self.loadstring, self.type, self.ipairs, self.pairs, self.pcall, self.print, self.getmetatable, self.setmetatable
 local byte, sub

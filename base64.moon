@@ -25,6 +25,9 @@
 
 @ = getfenv()
 
+-- require once
+if type(@base64) == "table" and @base64.encode and @base64.decode
+    return @base64
 
 import rshift, lshift, bor, band from bit32 or bit
 import byte, char from string

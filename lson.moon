@@ -25,6 +25,10 @@
 
 @ = getfenv()
 
+-- require once
+if type(@LSON) == "table" and @LSON.stringify and @LSON.parse
+    return @LSON
+
 import loadstring, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
 import byte, sub from string
 import encode, decode from require("base64")

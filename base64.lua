@@ -1,4 +1,7 @@
 local self = getfenv()
+if type(self.base64) == "table" and self.base64.encode and self.base64.decode then
+  return self.base64
+end
 local rshift, lshift, bor, band
 do
   local _obj_0 = bit32 or bit
