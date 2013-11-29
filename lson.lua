@@ -2,15 +2,55 @@ local self = _ENV or getfenv()
 local isLua52 = getfenv == nil
 local load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable
 load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable = self.load, self.type, self.ipairs, self.pairs, self.pcall, self.print, self.getmetatable, self.setmetatable
-local byte, sub, dump
+local byte, sub, dump, gsub
 do
   local _obj_0 = string
-  byte, sub, dump = _obj_0.byte, _obj_0.sub, _obj_0.dump
+  byte, sub, dump, gsub = _obj_0.byte, _obj_0.sub, _obj_0.dump, _obj_0.gsub
 end
 local encode, decode
 do
   local _obj_0 = require("base64")
   encode, decode = _obj_0.encode, _obj_0.decode
+end
+local escapeString
+escapeString = function(c)
+  if c == '\a' then
+    return "\\a"
+  else
+    if c == '\b' then
+      return "\\b"
+    else
+      if c == '\f' then
+        return "\\f"
+      else
+        if c == '\n' then
+          return "\\n"
+        else
+          if c == '\r' then
+            return "\\r"
+          else
+            if c == '\t' then
+              return "\\t"
+            else
+              if c == '\v' then
+                return "\\v"
+              else
+                if c == '\\' then
+                  return "\\\\"
+                else
+                  if c == '"' then
+                    return "\\\""
+                  else
+                    return c
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
 end
 local toLSON
 toLSON = function(o, reconstructable, circularCheckTable)
@@ -85,7 +125,7 @@ toLSON = function(o, reconstructable, circularCheckTable)
     return ret
   elseif "string" == _exp_0 then
     if reconstructable then
-      return "\"" .. tostring(o) .. "\""
+      return "\"" .. tostring(gsub(o, "[\a\b\f\n\r\t\v\\\"]", escapeString)) .. "\""
     else
       return tostring(o)
     end

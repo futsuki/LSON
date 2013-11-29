@@ -28,9 +28,21 @@
 isLua52 = getfenv == nil
 
 import load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from @
-import byte, sub, dump from string
+import byte, sub, dump, gsub from string
 import encode, decode from require("base64")
 
+escapeString = (c) ->
+    if c == '\a' then "\\a"
+    else if c == '\b' then "\\b"
+    else if c == '\f' then "\\f"
+    else if c == '\n' then "\\n"
+    else if c == '\r' then "\\r"
+    else if c == '\t' then "\\t"
+    else if c == '\v' then "\\v"
+    else if c == '\\' then "\\\\"
+    else if c == '"' then "\\\""
+    else c
+    
 -- lua script object notation
 toLSON = (o, reconstructable=true, circularCheckTable={}) ->
     if type(o) == "table"
@@ -77,7 +89,7 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
             ret
         when "string"
             if reconstructable
-                "\"#{o}\""
+                "\"#{gsub o, "[\a\b\f\n\r\t\v\\\"]", escapeString}\""
             else
                 "#{o}"
         when "function"

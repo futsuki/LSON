@@ -6,7 +6,7 @@ local hoge = {
     foo = 3,
     bar = 5,
     foobar = 42,
-    str = "abcdefg",
+    str = "abcdefg\"'\n",
     arr = {5,6,7,8,9},
     fun = function()
         return 10
@@ -22,7 +22,6 @@ local hoge2 = LSON.parse(ls)
 
 -- なんと関数ももどる！すげー
 print("fun()", hoge2.fun())
-
 
 
 -- この2つはほぼ同じ意味
