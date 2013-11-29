@@ -12,8 +12,8 @@ do
   local _obj_0 = require("base64")
   encode, decode = _obj_0.encode, _obj_0.decode
 end
-local escapeString
-escapeString = function(c)
+local escaper
+escaper = function(c)
   if c == '\a' then
     return "\\a"
   else
@@ -51,6 +51,10 @@ escapeString = function(c)
       end
     end
   end
+end
+local escapeString
+escapeString = function(s)
+  return gsub(s, "[\a\b\f\n\r\t\v\\\"]", escaper)
 end
 local toLSON
 toLSON = function(o, reconstructable, circularCheckTable)
@@ -125,7 +129,7 @@ toLSON = function(o, reconstructable, circularCheckTable)
     return ret
   elseif "string" == _exp_0 then
     if reconstructable then
-      return "\"" .. tostring(gsub(o, "[\a\b\f\n\r\t\v\\\"]", escapeString)) .. "\""
+      return "\"" .. tostring(escapeString(o)) .. "\""
     else
       return tostring(o)
     end

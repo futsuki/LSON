@@ -31,7 +31,7 @@ import load, type, ipairs, pairs, pcall, print, getmetatable, setmetatable from 
 import byte, sub, dump, gsub from string
 import encode, decode from require("base64")
 
-escapeString = (c) ->
+escaper = (c) ->
     if c == '\a' then "\\a"
     else if c == '\b' then "\\b"
     else if c == '\f' then "\\f"
@@ -42,6 +42,9 @@ escapeString = (c) ->
     else if c == '\\' then "\\\\"
     else if c == '"' then "\\\""
     else c
+
+escapeString = (s) ->
+    gsub s, "[\a\b\f\n\r\t\v\\\"]", escaper
     
 -- lua script object notation
 toLSON = (o, reconstructable=true, circularCheckTable={}) ->
@@ -89,7 +92,7 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
             ret
         when "string"
             if reconstructable
-                "\"#{gsub o, "[\a\b\f\n\r\t\v\\\"]", escapeString}\""
+                "\"#{escapeString o}\""
             else
                 "#{o}"
         when "function"
