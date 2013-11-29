@@ -125,14 +125,13 @@ toLSON = function(o, reconstructable, pretty, circularCheckTable, indent)
         end
         local vstr = toLSON(v, reconstructable, pretty, circularCheckTable, indent + 2)
         local kstr = toLSON(k, reconstructable, pretty, circularCheckTable, indent + 2)
-        if vstr ~= nil then
-          if reconstructable then
-            ret = ret .. "[" .. tostring(kstr) .. "] = " .. tostring(vstr)
-          else
-            ret = ret .. tostring(kstr) .. " = " .. tostring(vstr)
-          end
+        if vstr == nil then
+          vstr = "nil"
+        end
+        if reconstructable then
+          ret = ret .. "[" .. tostring(kstr) .. "] = " .. tostring(vstr)
         else
-          ret = ret .. "[" .. tostring(kstr) .. "] = nil"
+          ret = ret .. tostring(kstr) .. " = " .. tostring(vstr)
         end
         _continue_0 = true
       until true

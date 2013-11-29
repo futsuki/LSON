@@ -1,4 +1,3 @@
-
 -- This is free and unencumbered software released into the public domain.
 -- 
 -- Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -88,13 +87,12 @@ toLSON = (o, reconstructable=true, pretty=false, circularCheckTable={}, indent=0
                         ret ..= "\n" .. string.rep(" ", indent+2)
                 vstr = toLSON v, reconstructable, pretty, circularCheckTable, indent+2
                 kstr = toLSON k, reconstructable, pretty, circularCheckTable, indent+2
-                if vstr != nil
-                    if reconstructable
-                        ret ..= "[#{kstr}] = #{vstr}"
-                    else
-                        ret ..= "#{kstr} = #{vstr}"
+                if vstr == nil
+                    vstr = "nil"
+                if reconstructable
+                    ret ..= "[#{kstr}] = #{vstr}"
                 else
-                    ret ..= "[#{kstr}] = nil"
+                    ret ..= "#{kstr} = #{vstr}"
             if pretty
                 ret ..= "\n" .. string.rep(" ", indent)
             ret ..= "}"

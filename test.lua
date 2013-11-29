@@ -6,10 +6,12 @@ local hoge = {
     foo = 3,
     bar = 5,
     foobar = 42,
+    natfun = table.concat,
+    
     str = "abcdefg",
     arr = {5,6,7,8,9},
     fun = function()
-        return 10
+        return table.concat({1,2,3,4,"abc",5})
     end
 }
 
