@@ -1,3 +1,4 @@
+
 -- This is free and unencumbered software released into the public domain.
 -- 
 -- Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -47,7 +48,7 @@ escapeString = (s) ->
     gsub s, "[\a\b\f\n\r\t\v\\\"]", escaper
     
 -- lua script object notation
-toLSON = (o, reconstructable=true, circularCheckTable={}) ->
+toLSON = (o, reconstructable=true, pretty=false, circularCheckTable={}, indent=0) ->
     if type(o) == "table"
         if circularCheckTable[o] != nil
             if reconstructable
@@ -64,9 +65,11 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
             for i, v in ipairs o
                 if first
                     first = false
+                    if pretty
+                        ret ..= "\n" .. string.rep(" ", indent+2)
                 else
                     ret ..= ", "
-                vstr = toLSON v, reconstructable, circularCheckTable
+                vstr = toLSON v, reconstructable, pretty, circularCheckTable, indent+2
                 ret ..= "#{vstr}"
                 processed = i
             for k, v in pairs o
@@ -77,10 +80,14 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
                     continue
                 if first
                     first = false
+                    if pretty
+                        ret ..= "\n" .. string.rep(" ", indent+2)
                 else
                     ret ..= ", "
-                vstr = toLSON v, reconstructable, circularCheckTable
-                kstr = toLSON k, reconstructable, circularCheckTable
+                    if pretty
+                        ret ..= "\n" .. string.rep(" ", indent+2)
+                vstr = toLSON v, reconstructable, pretty, circularCheckTable, indent+2
+                kstr = toLSON k, reconstructable, pretty, circularCheckTable, indent+2
                 if vstr != nil
                     if reconstructable
                         ret ..= "[#{kstr}] = #{vstr}"
@@ -88,6 +95,8 @@ toLSON = (o, reconstructable=true, circularCheckTable={}) ->
                         ret ..= "#{kstr} = #{vstr}"
                 else
                     ret ..= "[#{kstr}] = nil"
+            if pretty
+                ret ..= "\n" .. string.rep(" ", indent)
             ret ..= "}"
             ret
         when "string"
@@ -148,16 +157,20 @@ fromLSON = (str, env=parseEnv) ->
 if @p == nil
     @p = (...) ->
         param = {...}
-        if #param == 1
-            print toLSON(param[1], false)
-        else
-            for i, v in ipairs param
-                print toLSON(v, false)
+        arr = {}
+        for i, v in ipairs param
+            arr[#arr+1] = toLSON(v, false, true)
+        print unpack(arr)
         ...
 
+
 LSON = 
-    stringify: toLSON
-    parse: fromLSON
+    stringify: (o, t) ->
+        {:reconstructable, :pretty} = t or {}
+        toLSON(o, reconstructable, pretty)
+    parse: (s, t) ->
+        {:env} = t or {}
+        fromLSON s, env
     p: p
 
 

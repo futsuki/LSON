@@ -57,12 +57,18 @@ escapeString = function(s)
   return gsub(s, "[\a\b\f\n\r\t\v\\\"]", escaper)
 end
 local toLSON
-toLSON = function(o, reconstructable, circularCheckTable)
+toLSON = function(o, reconstructable, pretty, circularCheckTable, indent)
   if reconstructable == nil then
     reconstructable = true
   end
+  if pretty == nil then
+    pretty = false
+  end
   if circularCheckTable == nil then
     circularCheckTable = { }
+  end
+  if indent == nil then
+    indent = 0
   end
   if type(o) == "table" then
     if circularCheckTable[o] ~= nil then
@@ -83,10 +89,13 @@ toLSON = function(o, reconstructable, circularCheckTable)
     for i, v in ipairs(o) do
       if first then
         first = false
+        if pretty then
+          ret = ret .. ("\n" .. string.rep(" ", indent + 2))
+        end
       else
         ret = ret .. ", "
       end
-      local vstr = toLSON(v, reconstructable, circularCheckTable)
+      local vstr = toLSON(v, reconstructable, pretty, circularCheckTable, indent + 2)
       ret = ret .. tostring(vstr)
       processed = i
     end
@@ -105,11 +114,17 @@ toLSON = function(o, reconstructable, circularCheckTable)
         end
         if first then
           first = false
+          if pretty then
+            ret = ret .. ("\n" .. string.rep(" ", indent + 2))
+          end
         else
           ret = ret .. ", "
+          if pretty then
+            ret = ret .. ("\n" .. string.rep(" ", indent + 2))
+          end
         end
-        local vstr = toLSON(v, reconstructable, circularCheckTable)
-        local kstr = toLSON(k, reconstructable, circularCheckTable)
+        local vstr = toLSON(v, reconstructable, pretty, circularCheckTable, indent + 2)
+        local kstr = toLSON(k, reconstructable, pretty, circularCheckTable, indent + 2)
         if vstr ~= nil then
           if reconstructable then
             ret = ret .. "[" .. tostring(kstr) .. "] = " .. tostring(vstr)
@@ -124,6 +139,9 @@ toLSON = function(o, reconstructable, circularCheckTable)
       if not _continue_0 then
         break
       end
+    end
+    if pretty then
+      ret = ret .. ("\n" .. string.rep(" ", indent))
     end
     ret = ret .. "}"
     return ret
@@ -201,19 +219,31 @@ if self.p == nil then
     local param = {
       ...
     }
-    if #param == 1 then
-      print(toLSON(param[1], false))
-    else
-      for i, v in ipairs(param) do
-        print(toLSON(v, false))
-      end
+    local arr = { }
+    for i, v in ipairs(param) do
+      arr[#arr + 1] = toLSON(v, false, true)
     end
+    print(unpack(arr))
     return ...
   end
 end
 local LSON = {
-  stringify = toLSON,
-  parse = fromLSON,
+  stringify = function(o, t)
+    local reconstructable, pretty
+    do
+      local _obj_0 = t or { }
+      reconstructable, pretty = _obj_0.reconstructable, _obj_0.pretty
+    end
+    return toLSON(o, reconstructable, pretty)
+  end,
+  parse = function(s, t)
+    local env
+    do
+      local _obj_0 = t or { }
+      env = _obj_0.env
+    end
+    return fromLSON(s, env)
+  end,
   p = p
 }
 return LSON
