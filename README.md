@@ -1,6 +1,17 @@
-﻿# LSON
+# LSON
 
 Lua Script Object Notation
+
+***
+
+* [概要](#%E6%A6%82%E8%A6%81)
+* [License](#license)
+* [Example](#example)
+* [Function Reference](#function-reference)
+
+***
+
+## 概要
 
 JavascriptのJSON風のインターフェース
 
