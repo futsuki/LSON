@@ -91,7 +91,7 @@ encode3bytesTail = (s, start) ->
 
 
 decode4bytes = (s, start) ->
-    c1, c2, c3, c4 = byte(s, start, start+4)
+    c1, c2, c3, c4 = byte(s, start, start+3)
     c1, c2, c3, c4 = DECODE_TABLE[c1], DECODE_TABLE[c2], DECODE_TABLE[c3], DECODE_TABLE[c4]
     b1 = bor(lshift(band(c1, 63), 2), rshift(c2, 4))
     b2 = bor(lshift(band(c2, 15), 4), rshift(c3, 2))
@@ -99,7 +99,7 @@ decode4bytes = (s, start) ->
     CHAR_TABLE[b1+1], CHAR_TABLE[b2+1], CHAR_TABLE[b3+1]
 
 decode4bytesTail = (s, start) ->
-    c1, c2, c3, c4 = byte(s, start, start+4)
+    c1, c2, c3, c4 = byte(s, start, start+3)
     c1, c2, c3, c4 = DECODE_TABLE[c1], DECODE_TABLE[c2], DECODE_TABLE[c3], DECODE_TABLE[c4]
     if c1 == -1 then c1 = nil
     if c2 == -1 then c2 = nil

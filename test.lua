@@ -1,29 +1,4 @@
-﻿-- This is free and unencumbered software released into the public domain.
--- 
--- Anyone is free to copy, modify, publish, use, compile, sell, or
--- distribute this software, either in source code form or as a compiled
--- binary , for any purpose, commercial or non-commercial, and by any
--- means.
--- 
--- In jurisdictions that recognize copyright laws, the author or authors
--- of this software dedicate any and all copyright interest in the
--- software to the public domain. We make this dedication for the benefit
--- of the public at large and to the detriment of our heirs and
--- successors. We intend this dedication to be an overt act of
--- relinquishment in perpetuity of all present and future rights to this
--- software under copyright law.
--- 
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
--- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
--- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
--- IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
--- OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
--- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
--- OTHER DEALINGS IN THE SOFTWARE.
--- 
--- For more information, please refer to <http://unlicense.org>
-
-LSON = require("lson")
+﻿LSON = require("lson")
 
 local hoge = {
     1, 2, 3, 4, 5,
@@ -43,15 +18,16 @@ local hoge = {
 local ls = LSON.stringify(hoge)
 print("lson", ls)
 -->lson    {1, 2, 3, 4, 5, ["foobar"] = 42, ["foo"] = 3, ["str"] = "abcdefg", ["fun
--- "] = FUNCTION("G0xKAQAJQHRlc3QubHVhFQAAAQAAAAIDCwInAAoASAACAAEBAAA="), ["arr"] =
---  {5, 6, 7, 8, 9}, ["bar"] = 5}
+-- "] = FUNCTION("G0xKAQAJQHRlc3QubHVhPgAAAgADAAQFJQI0AAAANwABADMBAgBAAAIAAQcAAAMBA
+-- wIDAwMECGFiYwMFC2NvbmNhdAp0YWJsZQEBAQEAAA=="), ["natfun"] = nil, ["arr"] = {5, 6
+-- , 7, 8, 9}, ["bar"] = 5}
 
 -- もどす
 local hoge2 = LSON.parse(ls)
 
 -- なんと関数ももどる！すげー
 print("fun()", hoge2.fun())
---> fun()   10
+--> fun()   1234abc5
 
 
 
@@ -72,17 +48,22 @@ p("pretty", hoge)
 --   foobar = 42,
 --   foo = 3,
 --   str = abcdefg,
---   fun = function: 0x00238bd0,
+--   fun = function: 0x00239b18,
+--   natfun = function: builtin#98,
 --   arr = {
 --     5, 6, 7, 8, 9
 --   },
 --   bar = 5
 -- }
 
--- p関数は、下のコードと等価。
+-- p(hoge)
+-- は、次のコードとほぼ同じ。
 -- print(LSON.stringify(hoge, {pretty=true, reconstructable=false}))
 
--- p関数の返値は引数自身なので、値のトレース代わりに挟むことも出来る。
-
+-- ただし、p関数の引数をそのまま返すので、値のトレース代わりに挟むことも出来る。
+result = p(math.pow(10, 10))
+-->10000000000
+print(result)
+-->10000000000
 
 

@@ -1,15 +1,17 @@
-﻿LSON
-====
+﻿# LSON
 
 Lua Script Object Notation
 
 JavascriptのJSON風のインターフェース
 
-LuaJIT2.0.2 と Lua5.2.1 で動作確認しています。他にもLua環境があったら教えて下さい。
+LuaJIT2.0.2 と Lua5.2.1 で動作確認しています。動かないLua環境があったら教えて下さい。
 
-License
--------
-PUBLIC DOMAIN
+
+## License
+Public Domain (unlicense)
+
+## Document
+[Reference](./LSON/wiki)
 
 
 ## Example
@@ -24,10 +26,12 @@ local hoge = {
     foo = 3,
     bar = 5,
     foobar = 42,
+    natfun = table.concat,
+    
     str = "abcdefg",
     arr = {5,6,7,8,9},
     fun = function()
-        return 10
+        return table.concat({1,2,3,4,"abc",5})
     end
 }
 
@@ -35,15 +39,16 @@ local hoge = {
 local ls = LSON.stringify(hoge)
 print("lson", ls)
 -->lson    {1, 2, 3, 4, 5, ["foobar"] = 42, ["foo"] = 3, ["str"] = "abcdefg", ["fun
--- "] = FUNCTION("G0xKAQAJQHRlc3QubHVhFQAAAQAAAAIDCwInAAoASAACAAEBAAA="), ["arr"] =
---  {5, 6, 7, 8, 9}, ["bar"] = 5}
+-- "] = FUNCTION("G0xKAQAJQHRlc3QubHVhPgAAAgADAAQFJQI0AAAANwABADMBAgBAAAIAAQcAAAMBA
+-- wIDAwMECGFiYwMFC2NvbmNhdAp0YWJsZQEBAQEAAA=="), ["natfun"] = nil, ["arr"] = {5, 6
+-- , 7, 8, 9}, ["bar"] = 5}
 
 -- もどす
 local hoge2 = LSON.parse(ls)
 
 -- なんと関数ももどる！すげー
 print("fun()", hoge2.fun())
---> fun()   10
+--> fun()   1234abc5
 
 
 
@@ -64,16 +69,21 @@ p("pretty", hoge)
 --   foobar = 42,
 --   foo = 3,
 --   str = abcdefg,
---   fun = function: 0x00238bd0,
+--   fun = function: 0x00239b18,
+--   natfun = function: builtin#98,
 --   arr = {
 --     5, 6, 7, 8, 9
 --   },
 --   bar = 5
 -- }
 
--- p関数は、下のコードと等価。
+-- p(hoge)
+-- は、次のコードとほぼ同じ。
 -- print(LSON.stringify(hoge, {pretty=true, reconstructable=false}))
 
--- p関数の返値は引数自身なので、値のトレース代わりに挟むことも出来る。
-
+-- ただし、p関数の引数をそのまま返すので、値のトレース代わりに挟むことも出来る。
+result = p(math.pow(10, 10))
+-->10000000000
+print(result)
+-->10000000000
 ```
