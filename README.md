@@ -49,7 +49,6 @@ print("fun()", hoge2.fun())
 
 ## Function Reference
 ### LSON.stringify()
-擬似関数型
 * `string stringify(object v, table option={pretty=false, reconstructable=true})`
 
 `v` はLuaの値ならば何でも受け付けます。これが文字列化して返されます。
@@ -67,7 +66,6 @@ print("fun()", hoge2.fun())
 * ネイティブ関数を無視せずにとりあえず識別用のアドレスだけでも表示します。
 
 ### LSON.parse()
-擬似関数型
 * `object parse(string lsonstr)`
 
 `lsonstr`には`stringify()`によって作られたLSON文字列を渡します。これが解釈されてオブジェクトになって返されます。
