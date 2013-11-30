@@ -10,13 +10,8 @@ LuaJIT2.0.2 と Lua5.2.1 で動作確認しています。動かないLua環境�
 ## License
 Public Domain (unlicense)
 
-## Document
-[Reference](../../wiki)
-
 
 ## Example
-
-> test.lua
 
 ```lua
 LSON = require("lson")
@@ -27,7 +22,6 @@ local hoge = {
     bar = 5,
     foobar = 42,
     natfun = table.concat,
-    
     str = "abcdefg",
     arr = {5,6,7,8,9},
     fun = function()
@@ -49,41 +43,33 @@ local hoge2 = LSON.parse(ls)
 -- なんと関数ももどる！すげー
 print("fun()", hoge2.fun())
 --> fun()   1234abc5
-
-
-
--- reconstructable=false にすると、たとえ再生成不可能になってもデータを表示しようとし、かつエラーを出さない。
---
--- 再生成不可能なもの(カッコ内は reconstructable=false のとき)
--- エラー
---   循環参照(かわりに [circular reference] と表示される)
--- 無視
---   ネイティブ関数(dumpできないのでアドレスが表示される)
---
--- pretty=true にすると、インデントを使った人間の目に優しい風味の文字列が返される。
-
-
-p("pretty", hoge)
--->pretty  {
---   1, 2, 3, 4, 5,
---   foobar = 42,
---   foo = 3,
---   str = abcdefg,
---   fun = function: 0x00239b18,
---   natfun = function: builtin#98,
---   arr = {
---     5, 6, 7, 8, 9
---   },
---   bar = 5
--- }
-
--- p(hoge)
--- は、次のコードとほぼ同じ。
--- print(LSON.stringify(hoge, {pretty=true, reconstructable=false}))
-
--- ただし、p関数の引数をそのまま返すので、値のトレース代わりに挟むことも出来る。
-result = p(math.pow(10, 10))
--->10000000000
-print(result)
--->10000000000
 ```
+
+***
+
+## Function Reference
+### LSON.stringify()
+擬似関数型
+* `string stringify(object v, table option={pretty=false, reconstructable=true})`
+
+`v` はLuaの値ならば何でも受け付けます。これが文字列化して返されます。
+
+`option` には追加の属性テーブルを渡します。指定できる属性は以下のとおりです。
+* `pretty` --- `true`にした場合、字下げを行って見やすくします。デフォルトは`false`。
+* `reconstructable` --- 動作の詳細は下に書いてあります。デフォルトは`true`。
+
+#### `reconstructable=true` を指定した場合の動作
+* 循環参照があるとエラーを出します。
+* ネイティブ関数を`nil`扱いします。（それがテーブルの値だった場合、値とキーもまとめて無視されるでしょう）
+
+#### `reconstructable=false` を指定した場合の動作
+* 循環参照が出現してもエラーを出さずに、循環参照であることを示す文字列を出力します。
+* ネイティブ関数を無視せずにとりあえず識別用のアドレスだけでも表示します。
+
+### LSON.parse()
+擬似関数型
+* `object parse(string lsonstr)`
+
+`lsonstr`には`stringify()`によって作られたLSON文字列を渡します。これが解釈されてオブジェクトになって返されます。
+
+
