@@ -11,7 +11,7 @@ LuaJIT2.0.2 と Lua5.2.1 で動作確認しています。動かないLua環境�
 Public Domain (unlicense)
 
 ## Document
-[Reference](./LSON/wiki)
+[Reference](../../wiki)
 
 
 ## Example
